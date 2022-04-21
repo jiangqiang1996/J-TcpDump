@@ -23,4 +23,10 @@
 hs_err_pid*
 
 #idea配置文件去除
+*.iml
 .idea
+target
+.settings
+.project
+.classpath
+/.idea/
