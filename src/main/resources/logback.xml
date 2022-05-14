@@ -13,7 +13,7 @@
     <property name="log_dir" value="/logs"/>
     <!-- <property name="log_dir" value="/home/data/logs/src" /> -->
     <property name="CONSOLE_LOG_PATTERN"
-              value="%d{yyyy-MM-dd HH:mm:ss} | %highlight(%-5level) | %boldYellow(%thread) | %boldGreen(%logger:%L) | %msg%n"></property><!--%F 类名-->
+              value="%d{yyyy-MM-dd HH:mm:ss} | %highlight(%-5level) | %boldYellow(%thread) | %boldGreen(%logger:%L) | %msg%n"/><!--%F 类名-->
     <!-- 日志最大的历史 30天 -->
     <property name="maxHistory" value="30"/>
     <!-- ConsoleAppender 控制台输出日志 -->

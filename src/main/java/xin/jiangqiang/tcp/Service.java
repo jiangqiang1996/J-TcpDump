@@ -71,7 +71,7 @@ public class Service {
         try {
             return new TaskInstance();
         } catch (Exception e) {
-            log.error("任务实例创建失败" + e.getMessage());
+            log.debug("任务实例创建失败" + e.getMessage());
             return null;
         }
     }
@@ -123,7 +123,7 @@ public class Service {
         byte[] buffer = new byte[1024];
         try {
             while ((length = new DataInputStream(inputStream).read(buffer)) > -1) {
-//                log.info(new String(buffer));//转发的数据内容
+                log.info("\n"+new String(buffer));//转发的数据内容
                 new DataOutputStream(outputStream).write(buffer, 0, length);
             }
         } catch (IOException e) {
@@ -132,8 +132,8 @@ public class Service {
     }
 
     public static void main(String[] args) throws IOException {
-//        Service service = getService(80, "127.0.0.1", 8848, 60*5);
-        Service service = getService(80, "192.168.1.2", 22, 60 * 5);
+        Service service = getService(80, "127.0.0.1", 8848, 3);//转发http通信可以把时间设置较短
+//        Service service = getService(80, "192.168.1.2", 22, 60);//连接ssh后，超过时间没有通信就会被关闭
         while (true) {
             TaskInstance taskInstance = service.getTaskInstance();
             if (taskInstance == null) {
@@ -145,7 +145,7 @@ public class Service {
                     write(taskInstance.getServer(), taskInstance.getClient());
                     log.info(taskInstance + "请求数据转发完毕");
                 } catch (Exception e) {
-                    log.error("请求数据转发过程出错：" + taskInstance + e.getMessage());
+                    log.debug("请求数据转发过程出错：" + taskInstance + e.getMessage());
                 } finally {
                     taskInstance.setClientIsEnableClosed(true);
                     boolean flag = taskInstance.autoClose();
@@ -160,7 +160,7 @@ public class Service {
                     write(taskInstance.getClient(), taskInstance.getServer());
                     log.info(taskInstance + "响应数据转发完毕");
                 } catch (Exception e) {
-                    log.error("响应数据转发过程出错：" + taskInstance + e.getMessage());
+                    log.debug("响应数据转发过程出错：" + taskInstance + e.getMessage());
                 } finally {
                     taskInstance.setServerIsEnableClosed(true);
                     boolean flag = taskInstance.autoClose();
@@ -191,7 +191,7 @@ public class Service {
                     log.info(socket + "socket关闭");
                     socket.close();
                 } catch (IOException e) {
-                    log.error(socket + "socket关闭失败");
+                    log.debug(socket + "socket关闭失败");
                 }
             }
         }
