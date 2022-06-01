@@ -23,7 +23,7 @@ public class Service {
     private final Integer remotePort;//目的端口
     private final Integer soTimeOut;//超时时间，单位秒
     private final ServerSocket serverSocket;//监听来的请求
-    private final ExecutorService executor = ThreadUtil.newExecutor(0, 5, 1000);
+    private final ExecutorService executor = ThreadUtil.newExecutor();//将任务直接提交给线程而不保持它们。当运行线程小于maxPoolSize时会创建新线程，否则触发异常策略
     private final List<TaskInstance> taskInstanceList = Collections.synchronizedList(new ArrayList<>());
 
     @Getter
@@ -125,7 +125,7 @@ public class Service {
 
     public void start() {
         log.info("启动成功：[{},{},{},{}]", this.port, this.remoteHost, this.remotePort, this.soTimeOut);
-        ThreadUtil.execute(() -> {
+        executor.execute(() -> {
             while (true) {
                 TaskInstance taskInstance = getTaskInstance();
                 if (taskInstance == null) {
@@ -133,7 +133,7 @@ public class Service {
                 }
                 log.info("获取到实例：{}", taskInstance);
                 getTaskInstanceList().add(taskInstance);
-                ThreadUtil.execute(() -> {
+                executor.execute(() -> {
                     try {
                         write(taskInstance.getServer(), taskInstance.getClient());
                         log.info(taskInstance + " 请求数据转发完毕");
@@ -148,7 +148,7 @@ public class Service {
                         }
                     }
                 });
-                ThreadUtil.execute(() -> {
+                executor.execute(() -> {
                     try {
                         write(taskInstance.getClient(), taskInstance.getServer());
                         log.info(taskInstance + " 响应数据转发完毕");
@@ -163,7 +163,7 @@ public class Service {
                         }
                     }
                 });
-                ThreadUtil.execute(() -> {
+                executor.execute(() -> {
                     while (true) {
                         List<TaskInstance> taskInstanceList1 = getTaskInstanceList();
                         try {
